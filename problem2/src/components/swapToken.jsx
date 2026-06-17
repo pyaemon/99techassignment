@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getSelectedToken } from "../helper/tokenHelper";
 import SwapDetail from "./swapDetailCard";
 import TokenSelect from "./tokenSelect";
@@ -16,6 +16,7 @@ const SwapToken = ({
   showSuccess,
   setShowSuccess,
 }) => {
+  const [fromAmountError, setFromAmountError] = useState("");
   const selectedFromToken = getSelectedToken(tokens, fromToken);
   const selectedToToken = getSelectedToken(tokens, toToken);
   const fromPrice = selectedFromToken?.price ?? 0;
@@ -29,7 +30,13 @@ const SwapToken = ({
   }, [fromAmount, rate, setToAmount]);
 
   const handleFromAmountChange = (e) => {
-    setFromAmount(e.target.value);
+    const value = e.target.value;
+    setFromAmount(value);
+    if (value === "" || Number(value) <= 0) {
+      setFromAmountError("Amount must be greater than 0");
+    } else {
+      setFromAmountError("");
+    }
   };
 
   const handleSwap = () => {
@@ -71,6 +78,7 @@ const SwapToken = ({
                 placeholder="0.00"
                 className="token-input flex-1 px-4 py-2 rounded-lg"
               />
+
               <TokenSelect
                 token={selectedFromToken}
                 value={fromToken}
@@ -78,6 +86,11 @@ const SwapToken = ({
                 tokens={tokens}
               />
             </div>
+            {fromAmountError && (
+              <p className="text-red-500 text-sm mt-1 text-left">
+                {fromAmountError}
+              </p>
+            )}
           </div>
           <button
             onClick={handleSwapTokens}
