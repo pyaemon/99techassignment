@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { getSelectedToken, getTokenImageUrl } from "../helper/tokenHelper";
+import { getSelectedToken } from "../helper/tokenHelper";
 import SwapDetail from "./swapDetailCard";
+import TokenSelect from "./tokenSelect";
 
 const SwapToken = ({
   tokens,
@@ -19,18 +20,13 @@ const SwapToken = ({
   const selectedToToken = getSelectedToken(tokens, toToken);
   const fromPrice = selectedFromToken?.price ?? 0;
   const toPrice = selectedToToken?.price ?? 0;
-
   const rate =
-    fromPrice > 0 && toPrice > 0 ? (fromPrice / toPrice).toFixed(6) : 0;
-
+    fromPrice && toPrice ? Number(fromPrice / toPrice).toFixed(6) : "0";
   useEffect(() => {
     const amount = parseFloat(fromAmount);
-    if (!isNaN(amount) && rate > 0) {
-      setToAmount((amount * rate).toFixed(6));
-    } else {
-      setToAmount("");
-    }
-  }, [fromAmount, rate]);
+
+    setToAmount(!isNaN(amount) && rate > 0 ? (amount * rate).toFixed(6) : "");
+  }, [fromAmount, rate, setToAmount]);
 
   const handleFromAmountChange = (e) => {
     setFromAmount(e.target.value);
@@ -46,8 +42,10 @@ const SwapToken = ({
     setFromAmount(toAmount);
     setToAmount(fromAmount);
   };
-  const isSwapDisabled =
-    !fromAmount || Number(fromAmount) <= 0 || fromToken === toToken;
+  const handleTokenChange = (setter) => (e) => {
+    setter(e.target.value);
+  };
+  const isSwapDisabled = Number(fromAmount) <= 0 || fromToken === toToken;
 
   return (
     <>
@@ -73,24 +71,12 @@ const SwapToken = ({
                 placeholder="0.00"
                 className="token-input flex-1 px-4 py-2 rounded-lg"
               />
-              <img
-                src={getTokenImageUrl(selectedFromToken?.currency)}
-                alt={selectedFromToken?.currency}
-                className="w-6 h-6 mt-2 rounded-full"
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/24x24?text=?";
-                }}
-              />
-              <select
+              <TokenSelect
+                token={selectedFromToken}
                 value={fromToken}
-                onChange={(e) => setFromToken(e.target.value)}
-              >
-                {tokens.map((token) => (
-                  <option key={token.currency} value={token.currency}>
-                    {token.currency}
-                  </option>
-                ))}
-              </select>
+                onChange={handleTokenChange(setFromToken)}
+                tokens={tokens}
+              />
             </div>
           </div>
           <button
@@ -112,24 +98,12 @@ const SwapToken = ({
                 placeholder="0.00"
                 className="flex-1 px-4 py-2 token-input rounded-lg"
               />
-              <img
-                src={getTokenImageUrl(selectedToToken?.currency)}
-                alt={selectedToToken?.currency}
-                className="w-6 h-6 mt-2 rounded-full"
-                onError={(e) => {
-                  e.currentTarget.src = "https://placehold.co/24x24?text=?";
-                }}
-              />
-              <select
+              <TokenSelect
+                token={selectedToToken}
                 value={toToken}
-                onChange={(e) => setToToken(e.target.value)}
-              >
-                {tokens.map((token) => (
-                  <option key={token.currency} value={token.currency}>
-                    {token.currency}
-                  </option>
-                ))}
-              </select>
+                onChange={handleTokenChange(setToToken)}
+                tokens={tokens}
+              />
             </div>
           </div>
 
