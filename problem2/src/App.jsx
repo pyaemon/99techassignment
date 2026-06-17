@@ -12,8 +12,8 @@ function App() {
   const [tokens, setTokens] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [fromToken, setFromToken] = useState("");
-  const [toToken, setToToken] = useState("");
+  const [fromToken, setFromToken] = useState("ETH");
+  const [toToken, setToToken] = useState("USDC");
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
@@ -27,10 +27,11 @@ function App() {
         if (result?.data && Array.isArray(result.data)) {
           const validToken = result.data?.filter((token) => token.price > 0);
           setTokens(validToken);
-
-          if (result.data.length >= 2) {
-            setFromToken(result.data[0].currency);
-            setToToken(result.data[1].currency);
+          if (!fromToken) {
+            setFromToken("ETH");
+          }
+          if (!toToken) {
+            setToToken("USDC");
           }
         }
         setLoading(false);
