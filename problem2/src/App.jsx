@@ -42,14 +42,15 @@ function App() {
       loadTokens();
     }
   }, [showSuccess]);
+
   const handleCloseModal = () => {
     setShowSuccess(false);
     setFromToken("");
     setFromAmount("");
     setToToken("");
     setToAmount("");
-    setTokens([]);
   };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
   return (
