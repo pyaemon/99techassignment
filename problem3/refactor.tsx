@@ -1,5 +1,3 @@
-import React, { useMemo } from "react";
-
 interface WalletBalance {
   currency: string;
   blockchain: string; // added missing blockchain
@@ -42,7 +40,7 @@ const WalletPage: React.FC<Props> = ({ ...rest }) => {
         ...balance,
         formatted: balance.amount.toFixed(2),
       })); //Combined filtering, sorting, and formatting into a single transformation pipeline, making the data flow easier
-  }, [balances]); // Removed unnecessary dependencies from useMemo by keeping only [balances], since prices are not used when computing formattedBalances.
+  }, [balances]); // Removed unnecessary dependencies from useMemo by keeping only [balances]
 
   const rows = formattedBalances.map((balance) => {
     // Added a fallback value when calculating USD amounts: (prices[balance.currency] ?? 0)
